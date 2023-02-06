@@ -1,7 +1,7 @@
 ---
 title: "PgAmdin4 展示 DDL 语句逻辑分析"
 date: 2022-04-13T19:31:40+08:00
-draft: true
+draft: false
 ---
 ## PgAmdin4 展示 DDL 语句
 通过 PgAdmin4 可以获取 table 的 DDL 语句

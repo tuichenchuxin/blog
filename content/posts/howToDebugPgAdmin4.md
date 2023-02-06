@@ -1,7 +1,7 @@
 ---
 title: "HowToDebugPgAdmin4"
 date: 2022-04-14T11:37:36+08:00
-draft: true
+draft: false
 ---
 
 ## 下载源码

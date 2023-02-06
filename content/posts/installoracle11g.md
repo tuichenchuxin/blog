@@ -1,7 +1,7 @@
 ---
 title: "mac docker 安装 oracle 11g"
 date: 2022-04-25T18:12:49+08:00
-draft: true
+draft: false
 ---
 ```
 docker pull registry.cn-hangzhou.aliyuncs.com/helowin/oracle_11g

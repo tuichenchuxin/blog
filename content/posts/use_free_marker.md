@@ -1,7 +1,7 @@
 ---
 title: "Freemarker 的使用"
 date: 2022-04-25T11:22:13+08:00
-draft: true
+draft: false
 ---
 
 ## Freemarker
