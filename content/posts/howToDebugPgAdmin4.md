@@ -1,5 +1,5 @@
 ---
-title: "HowToDebugPgAdmin4"
+title: "How To Debug PgAdmin4"
 date: 2022-04-14T11:37:36+08:00
 draft: false
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Get_postgres_create_table_sql"
+title: "How to get postgres create table sql"
 date: 2022-04-08T14:09:16+08:00
 draft: false
 ---
