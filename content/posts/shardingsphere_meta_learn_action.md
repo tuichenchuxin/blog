@@ -2,6 +2,7 @@
 title: "ShardingSphere 元数据能力增强解读与实战"
 date: 2023-03-06T09:14:47+08:00
 draft: false
+categories: ["Tech"]
 ---
 
 ## Apache ShardingSphere 元数据介绍

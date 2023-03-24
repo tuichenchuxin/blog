@@ -2,6 +2,7 @@
 title: "ShardingSphere 内置数据库设计"
 date: 2022-11-23T10:02:24+08:00
 draft: false
+categories: ["Tech"]
 ---
 
 # 目标

@@ -2,6 +2,7 @@
 title: "ShardingSphere PostgreSQL openGauss \\d 支持方案"
 date: 2022-11-04T18:09:40+08:00
 draft: false
+categories: ["Tech"]
 ---
 # PG \\d 支持
 

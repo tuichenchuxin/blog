@@ -41,7 +41,7 @@ WHERE c_custkey BETWEEN 13 AND 15
 ```
 ![](/img/20230316-113634.jpeg)
 
-
+# 文档信息提取
 https://help.aliyun.com/document_detail/316601.html
 
 
@@ -78,3 +78,64 @@ Sort-Merge Join是另一种等值JOIN算法，它依赖左右两边输入的顺�
 ## 关于 Join 顺序以及各种 join 的使用场景
 
 ![](/img/20230316-121006.jpg)
+
+# 文档信息提取
+https://zhuanlan.zhihu.com/p/379967662
+
+面对 OLTP 场景，可以使用大表和小表进行 join ，使用前文提到的 Lookup Join 算法
+但是对于 OLAP 的场景，我们可能就需要将数据从内存拉出来进行计算。
+
+等值 JOIN 那么一般就是 hash-join 和 sort-merge join 两种，Hash join 根据是否支持大数据量，又分为 内存 Hash-join 和 落盘版的 Hash-join
+
+## 内存版 Hash join 的实现
+![](/img/20230320-105410.jpg)
+
+根据统计信息选取较小的表根据 join 条件对给定的列 build hash table，然后流式遍历，去 hash table 里面找 key，如果一致，那么就拿出一整行，然后直接向下游输出，这个过程又叫 probe table
+
+```
+//build Table
+for row in t1:
+    hashValue = hash_func(row)
+    put (hashValue, row) into hash-table;
+
+//probe Table
+for row in t2:
+    hashValue = hash_func(row)
+    t1_row = lookup from hash-table 
+    if (t1_row != null) {
+       join(t1_row, row) 
+}
+```
+
+polardb-x 与一般的 hash join 最大的不同，是采用了内存友好的 vector 重新实现了哈希表，对 CPU CACHE 更友好，可以提高 JOIN 性能。
+![](/img/20230320-113142.jpg)
+具体实现没太明白。。。大概是搞了一些缓存索引结构？
+
+如果数据量太大，无法全部放到内存中的时候，那么就需要使用 HybridHashJoin 算法。
+
+## HybirdHashJoin
+Hybird hash join 从我的角度理解，就是将原表按照关联的键做 partition，然后分别在每个分区做 hash join.
+![](/img/20230320-134504.jpg)
+
+![](/img/20230320-134700.jpg)
+
+## SortMergeJoin
+```
+sort t1, sort t2
+R1 = t1.next()
+R2 = t2.next()
+while (R1 != null && R2 != null) {
+   if R1 joins with R2  
+      output (R1, R2)
+   else if R1 < R2  
+      R1 = t1.next()
+   else
+      R2 = t2.next()
+}
+```
+
+这种场景一般外排序会比较消耗 IO，一般 hash join.不过某些极端场景下， hash join 分桶之后，数据量还是超限，那么这种场景可能 sort merge join 就比较优势了。
+
+## Shuffle join
+TODO
+

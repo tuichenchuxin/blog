@@ -2,6 +2,7 @@
 title: "分布式 join 调研"
 date: 2023-03-14T09:40:45+08:00
 draft: false
+categories: ["Tech"]
 ---
 
 # 分布式 join 调研

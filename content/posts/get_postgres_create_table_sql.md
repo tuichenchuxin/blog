@@ -2,6 +2,7 @@
 title: "How to get postgres create table sql"
 date: 2022-04-08T14:09:16+08:00
 draft: false
+categories: ["Tech"]
 ---
 ## 获取 postgres 的建表语句的几种方法
 ### 使用 pg_dump

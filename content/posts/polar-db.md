@@ -2,6 +2,7 @@
 title: "Polar Db"
 date: 2022-06-14T18:09:13+08:00
 draft: false
+categories: ["Tech"]
 ---
 
 https://zhuanlan.zhihu.com/p/515688555

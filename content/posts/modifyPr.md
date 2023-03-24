@@ -2,6 +2,7 @@
 title: "How to Modify Pr"
 date: 2022-05-12T17:56:24+08:00
 draft: false
+categories: ["Tech"]
 ---
 
 Step 1: 克隆项目

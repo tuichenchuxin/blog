@@ -1,6 +1,7 @@
 ---
 title: "Add Yat Test for ShardingSphere"
 date: 2022-06-22T17:44:41+08:00
+categories: ["Tech"]
 draft: false
 ---
 

@@ -2,6 +2,7 @@
 title: "mac docker 安装 oracle 11g"
 date: 2022-04-25T18:12:49+08:00
 draft: false
+categories: ["Tech"]
 ---
 ```
 docker pull registry.cn-hangzhou.aliyuncs.com/helowin/oracle_11g
