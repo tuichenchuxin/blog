@@ -1,6 +1,7 @@
 ---
 title: "DataTTL 相关调研"
 date: 2023-02-06T11:46:34+08:00
+categories: ["Tech"]
 draft: false
 ---
 

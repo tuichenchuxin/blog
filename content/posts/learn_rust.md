@@ -1,8 +1,8 @@
 ---
-title: "Learn_rust"
+title: "rust 学习"
 date: 2023-02-28T08:51:39+08:00
 categories: ["Tech"]
-draft: true
+draft: false
 ---
 
 最开始是通过官方网站上这本书来学习
