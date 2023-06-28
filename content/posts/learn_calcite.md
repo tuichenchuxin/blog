@@ -2,7 +2,7 @@
 title: "calcite 学习"
 date: 2023-04-10T18:05:59+08:00
 categories: ["Tech"]
-draft: true
+draft: false
 ---
 
 ## Target
@@ -10,7 +10,7 @@ draft: true
 -  画出 calcite 的大体架构
 -  明白 calcite 是如何跟 SS 整合的
 -  未来 SS 还可以在哪些方面进一步利用 calcite
--  在 SS 提一个关于 calcite 使用的 issue，并开始开发
+-  calcite 优化逻辑源码级理解
 -  在 calcite 上提交 pr
 
 ## Process
@@ -45,4 +45,21 @@ HepPlanner
 6. 拿到之前的 RelOptPlanner （HepPlanner）
 7. 将 shardingsphere 的 sqlstatement 转化成 SqlNode
 8. 利用 SqlToRelConverter 将 sqlNode 转化为 RelNode
-9. 
+9. 然后分别进行RBO 和 CBO 优化
+10. 将优化结果与 dataContext 绑定
+11. 在 FilterableTableScanExecutor 执行下推逻辑，下推到各个逻辑库上执行。
+12. 将结果集封装到 ResultSet 中
+13. 同普通查询后续流程一致
+
+如何规划执行？默认每个表下推一次吗？
+从目前代码的 TranslatableTableScanExecutor 来看，确实是单表的下推。
+
+
+### 未来 SS 还可以在哪些方面进一步利用 calcite
+1. 内存的优化，目前全部都是抽取到内存中，大数据会 OOM
+2. 自定义算子的实现
+3. 利用数据的收集做代价优化
+
+### calcite 优化逻辑源码级理解
+1. 关系代数的理解 https://blog.csdn.net/QuinnNorris/article/details/70739094
+
