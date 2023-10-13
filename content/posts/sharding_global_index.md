@@ -1,7 +1,7 @@
 ---
 title: "分片表全局二级索引"
 date: 2023-09-26T10:20:20+08:00
-draft: false
+draft: true
 ---
 
 ```yaml
