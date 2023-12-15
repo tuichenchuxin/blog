@@ -28,10 +28,16 @@ Error occurred during initialization of boot layer FindException: Module not fou
 所以需要勾选运行前不 build 即可解决问题。
 
 [x] testSealed2
+
 [x] testSealed3
+
 [x] testSealedAccessibleMethods
+
 创建 hikari datasoure 的时候会设置 sealed, 如果已经 sealed 了，那么后续就不允许改了。
-[x] testIdleTimeout 看一下 idle 为什么被释放。
+
+[x] testIdleTimeout
+
+ 看一下 idle 为什么被释放。
 ```java
  @Test
    public void testIdleTimeout() throws InterruptedException, SQLException
@@ -80,7 +86,9 @@ Error occurred during initialization of boot layer FindException: Module not fou
 this.houseKeeperTask = houseKeepingExecutorService.scheduleWithFixedDelay(new HouseKeeper(), 100L, housekeepingPeriodMs, MILLISECONDS);
 ```
 debug 发现是 houseKeeperTask ,定时任务，探测到最小空闲连接已经小于 4 了，因此又补充了。
+
 那么又是谁释放了呢？
+
 依然是 houseKeeperTask 发现空闲连接已经大于最小空闲连接配置，并且时间已经超过 配置的 3000 ms,所以就释放了。
 ```java 
             if (idleTimeout > 0L && config.getMinimumIdle() < config.getMaximumPoolSize()) {
