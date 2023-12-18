@@ -104,3 +104,11 @@ debug 发现是 houseKeeperTask ,定时任务，探测到最小空闲连接已�
                logPoolState("After cleanup  ");
             }
 ```
+
+- [x] testIdleTimeout2
+- [x] testConcurrentClose
+- [x] testPoolSizeAboutSameSizeAsThreadCount
+   > 测试 poolSize 的大小基本上跟线程数差不多
+- [x] testSlowConnectionTimeBurstyWork
+   > 测试快速的任务处理下，连接创建比较慢，但是实际使用的connection 很少
+
