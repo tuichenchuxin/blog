@@ -19,7 +19,7 @@ pool size 比想象的要小的多，这样更能拥有更好的性能。因为�
 ## HikariCP 怎么学习
 考虑编译起来，然后运行 test 查看代码逻辑
 
-[x] testSealed1
+- [x] testSealed1
 
 通过 IDEA 运行时发现总会报
 Error occurred during initialization of boot layer FindException: Module not found
@@ -27,15 +27,15 @@ Error occurred during initialization of boot layer FindException: Module not fou
 但是 idea 运行之前会 build 然后就改变了 target 下部分代码。
 所以需要勾选运行前不 build 即可解决问题。
 
-[x] testSealed2
+- [x] testSealed2
 
-[x] testSealed3
+- [x] testSealed3
 
-[x] testSealedAccessibleMethods
+- [x] testSealedAccessibleMethods
 
 创建 hikari datasoure 的时候会设置 sealed, 如果已经 sealed 了，那么后续就不允许改了。
 
-[x] testIdleTimeout
+- [x] testIdleTimeout
 
  看一下 idle 为什么被释放。
 ```java
@@ -111,4 +111,17 @@ debug 发现是 houseKeeperTask ,定时任务，探测到最小空闲连接已�
    > 测试 poolSize 的大小基本上跟线程数差不多
 - [x] testSlowConnectionTimeBurstyWork
    > 测试快速的任务处理下，连接创建比较慢，但是实际使用的connection 很少
-
+- [x] testRaceCondition
+   > 测试30s,不停创建连接和驱逐连接
+- [x] testAutoCommit
+   > 测试设置 autoCommit 为false ,关闭连接后，代理的原真实连接还是会恢复成原状
+- [x] testTransactionIsolation
+   > 测试设置 isolation，关闭连接后，恢复（dirtyBits 通过位运算来提高性能）
+- [x] testIsolation
+   > 看起来就是测试设置 isolation 成功
+-[x] testReadOnly
+   > 测试设置 readOnly, 关闭连接后，恢复
+-[x] testCatalog
+   > 测试设置 catalog, 关闭连接后，恢复
+-[x] testCommitTracking
+   > 测试 isCommitStateDirty 在 autoCommit = false 时，有 SQL 执行时，就变成 true, rollback 或者 commit 就恢复
