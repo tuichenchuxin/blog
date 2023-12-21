@@ -119,9 +119,18 @@ debug 发现是 houseKeeperTask ,定时任务，探测到最小空闲连接已�
    > 测试设置 isolation，关闭连接后，恢复（dirtyBits 通过位运算来提高性能）
 - [x] testIsolation
    > 看起来就是测试设置 isolation 成功
--[x] testReadOnly
+- [x] testReadOnly
    > 测试设置 readOnly, 关闭连接后，恢复
--[x] testCatalog
+- [x] testCatalog
    > 测试设置 catalog, 关闭连接后，恢复
--[x] testCommitTracking
+- [x] testCommitTracking
    > 测试 isCommitStateDirty 在 autoCommit = false 时，有 SQL 执行时，就变成 true, rollback 或者 commit 就恢复
+- [x] testException1
+   > 测试异常之后，能够自动检查 exception 并且关闭连接
+- [x] testUseAfterStatementClose
+   > 测试关闭 statement 之后，不允许再使用 statement
+- [x] testUseAfterClose
+   > 测试关闭连接后使用
+- [x] testLastErrorTimeout
+   > 测试获取 connection 时，isConnectionDead 不会主动抛出异常
+   

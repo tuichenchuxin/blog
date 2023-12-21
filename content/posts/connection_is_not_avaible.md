@@ -1,5 +1,5 @@
 ---
-title: "Connection_is_not_avaible"
+title: "Connection is not avaible"
 date: 2023-11-09T16:03:41+08:00
 draft: false
 ---
