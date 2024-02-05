@@ -4,7 +4,7 @@ date: 2024-01-31T15:13:06+08:00
 draft: false
 ---
 
-## 线程池源码分析
+## 线程池构造方法
 
 Executors 类可以方便构造常用的线程池。
 
@@ -71,6 +71,8 @@ ForkJoinPool
         this.workerNamePrefix = "ForkJoinPool-" + pid + "-worker-";
     }
 ```
+
+## 特殊的队列 SynchronousQuery 实现分析
 
 关于 BlockingQueue<Runnable> workQueue
 
@@ -253,7 +255,7 @@ public class SynchronousQueueDemo {
         }
 ```
 
-## execute 流程
+## 为什么将任务添加到队列后，能够持续读取任务并执行
 
 ```java
 // ctl 中既存了worker 数量，又存了线程池状态
@@ -407,6 +409,84 @@ final void runWorker(Worker w) {
         completedAbruptly = false;
     } finally {
         processWorkerExit(w, completedAbruptly);
+    }
+}
+```
+
+## 线程池是如何优雅退出的
+
+提供了 shutdown 和 shutdownNow 两种方法
+
+```java
+public void shutdown() {
+        final ReentrantLock mainLock = this.mainLock;
+        mainLock.lock();
+        try {
+            checkShutdownAccess();
+            advanceRunState(SHUTDOWN);
+            interruptIdleWorkers();
+            onShutdown(); // hook for ScheduledThreadPoolExecutor
+        } finally {
+            mainLock.unlock();
+        }
+        tryTerminate();
+    }
+
+```
+
+```java
+// 传入 false
+ private void interruptIdleWorkers(boolean onlyOne) {
+        final ReentrantLock mainLock = this.mainLock;
+        mainLock.lock();
+        try {
+            for (Worker w : workers) {
+                Thread t = w.thread;
+                // 获取锁的线程都调用 interrupt,如果 worker 正在运行，那么会占用该锁
+                if (!t.isInterrupted() && w.tryLock()) {
+                    try {
+                        t.interrupt();
+                    } catch (SecurityException ignore) {
+                    } finally {
+                        w.unlock();
+                    }
+                }
+                if (onlyOne)
+                    break;
+            }
+        } finally {
+            mainLock.unlock();
+        }
+    }
+```
+
+```java
+public List<Runnable> shutdownNow() {
+    List<Runnable> tasks;
+    final ReentrantLock mainLock = this.mainLock;
+    mainLock.lock();
+    try {
+        checkShutdownAccess();
+        advanceRunState(STOP);
+        interruptWorkers();
+        tasks = drainQueue();
+    } finally {
+        mainLock.unlock();
+    }
+    tryTerminate();
+    return tasks;
+}
+```
+
+```java
+void interruptIfStarted() {
+    Thread t;
+    // worker 状态开始，未中断
+    if (getState() >= 0 && (t = thread) != null && !t.isInterrupted()) {
+        try {
+            t.interrupt();
+        } catch (SecurityException ignore) {
+        }
     }
 }
 ```
