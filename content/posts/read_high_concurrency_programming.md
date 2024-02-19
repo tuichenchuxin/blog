@@ -490,3 +490,85 @@ void interruptIfStarted() {
     }
 }
 ```
+
+## ScheduledThreadPool 为什么能实现定时？
+```java
+public ScheduledThreadPoolExecutor(int corePoolSize) {
+    super(corePoolSize, Integer.MAX_VALUE,
+            DEFAULT_KEEPALIVE_MILLIS, MILLISECONDS,
+            // 应该是它
+            new DelayedWorkQueue());
+}
+```
+
+内部使用了平衡二叉树，所以先了解下平衡二叉树
+> 平衡二叉树是平衡因子绝对值 <=1 ，并且是排序树
+> 关于平衡二叉树的调整，找新插入方向上，不平衡的树的根节点上相邻的三个点，重新排就行。
+
+队列的任务则是ScheduledFutureTask，他们依据执行剩余延迟时间来构造二叉树。
+
+```java
+public <V> ScheduledFuture<V> schedule(Callable<V> callable,
+                                        long delay,
+                                        TimeUnit unit) {
+    if (callable == null || unit == null)
+        throw new NullPointerException();
+    RunnableScheduledFuture<V> t = decorateTask(callable,
+        new ScheduledFutureTask<V>(callable,
+                                    // 触发时间
+                                    triggerTime(delay, unit),
+                                    // 记录进入队列的顺序
+                                    sequencer.getAndIncrement()));
+    delayedExecute(t);
+    return t;
+}
+```
+
+```java
+public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command,
+                                                    long initialDelay,
+                                                    long delay,
+                                                    TimeUnit unit) {
+    if (command == null || unit == null)
+        throw new NullPointerException();
+    if (delay <= 0L)
+        throw new IllegalArgumentException();
+    ScheduledFutureTask<Void> sft =
+        new ScheduledFutureTask<Void>(command,
+                                        null,
+                                        triggerTime(initialDelay, unit),
+                                        // 增加了延迟，如果有 period 那么就是周期性任务
+                                        -unit.toNanos(delay),
+                                        sequencer.getAndIncrement());
+    RunnableScheduledFuture<Void> t = decorateTask(command, sft);
+    sft.outerTask = t;
+    delayedExecute(t);
+    return t;
+}
+```
+
+```java
+public void run() {
+            if (!canRunInCurrentRunState(this))
+                cancel(false);
+            else if (!isPeriodic())
+                super.run();
+            else if (super.runAndReset()) {
+                setNextRunTime();
+                // 重复执行
+                reExecutePeriodic(outerTask);
+            }
+        }
+```
+
+最终还是调用 addWorker 方法
+```java
+void ensurePrestart() {
+    int wc = workerCountOf(ctl.get());
+    if (wc < corePoolSize)
+        addWorker(null, true);
+    else if (wc == 0)
+        addWorker(null, false);
+}
+```
+
