@@ -4,6 +4,8 @@ date: 2024-01-31T15:13:06+08:00
 draft: false
 ---
 
+# 线程池
+
 ## 线程池构造方法
 
 Executors 类可以方便构造常用的线程池。
@@ -572,3 +574,119 @@ void ensurePrestart() {
 }
 ```
 
+# AQS
+
+AQS 是 AbstractQueuedSynchronizer，是个抽象类
+ReentrantLock， Semaphore， SynchronousQueue 都是基于 AQS
+
+可以从 ReentrantLock 出发，来分析下，加锁，释放是如何跟 AQS 来交互的。
+AQS 内部是使用 CLH 双向队列。
+
+ReetrantLock lock 后如果不能立刻 CAS 获取锁，那么会调用该方法，能增加到 CLH 队列中
+代码比较复杂，看不明白。。
+大概是在设置 CLH 队列的节点，wait 和唤醒之类的
+
+```java
+/**
+     * Main acquire method, invoked by all exported acquire methods.
+     *
+     * @param node null unless a reacquiring Condition
+     * @param arg the acquire argument
+     * @param shared true if shared mode else exclusive
+     * @param interruptible if abort and return negative on interrupt
+     * @param timed if true use timed waits
+     * @param time if timed, the System.nanoTime value to timeout
+     * @return positive if acquired, 0 if timed out, negative if interrupted
+     */
+    final int acquire(Node node, int arg, boolean shared,
+                      boolean interruptible, boolean timed, long time) {
+        Thread current = Thread.currentThread();
+        byte spins = 0, postSpins = 0;   // retries upon unpark of first thread
+        boolean interrupted = false, first = false;
+        Node pred = null;                // predecessor of node when enqueued
+
+        /*
+         * Repeatedly:
+         *  Check if node now first
+         *    if so, ensure head stable, else ensure valid predecessor
+         *  if node is first or not yet enqueued, try acquiring
+         *  else if node not yet created, create it
+         *  else if not yet enqueued, try once to enqueue
+         *  else if woken from park, retry (up to postSpins times)
+         *  else if WAITING status not set, set and retry
+         *  else park and clear WAITING status, and check cancellation
+         */
+
+        for (;;) {
+            if (!first && (pred = (node == null) ? null : node.prev) != null &&
+                !(first = (head == pred))) {
+                if (pred.status < 0) {
+                    cleanQueue();           // predecessor cancelled
+                    continue;
+                } else if (pred.prev == null) {
+                    Thread.onSpinWait();    // ensure serialization
+                    continue;
+                }
+            }
+            if (first || pred == null) {
+                boolean acquired;
+                try {
+                    if (shared)
+                        acquired = (tryAcquireShared(arg) >= 0);
+                    else
+                        acquired = tryAcquire(arg);
+                } catch (Throwable ex) {
+                    cancelAcquire(node, interrupted, false);
+                    throw ex;
+                }
+                if (acquired) {
+                    if (first) {
+                        node.prev = null;
+                        head = node;
+                        pred.next = null;
+                        node.waiter = null;
+                        if (shared)
+                            signalNextIfShared(node);
+                        if (interrupted)
+                            current.interrupt();
+                    }
+                    return 1;
+                }
+            }
+            if (node == null) {                 // allocate; retry before enqueue
+                if (shared)
+                    node = new SharedNode();
+                else
+                    node = new ExclusiveNode();
+            } else if (pred == null) {          // try to enqueue
+                node.waiter = current;
+                Node t = tail;
+                node.setPrevRelaxed(t);         // avoid unnecessary fence
+                if (t == null)
+                    tryInitializeHead();
+                else if (!casTail(t, node))
+                    node.setPrevRelaxed(null);  // back out
+                else
+                    t.next = node;
+            } else if (first && spins != 0) {
+                --spins;                        // reduce unfairness on rewaits
+                Thread.onSpinWait();
+            } else if (node.status == 0) {
+                node.status = WAITING;          // enable signal and recheck
+            } else {
+                long nanos;
+                spins = postSpins = (byte)((postSpins << 1) | 1);
+                if (!timed)
+                    LockSupport.park(this);
+                else if ((nanos = time - System.nanoTime()) > 0L)
+                    LockSupport.parkNanos(this, nanos);
+                else
+                    break;
+                node.clearStatus();
+                if ((interrupted |= Thread.interrupted()) && interruptible)
+                    break;
+            }
+        }
+        return cancelAcquire(node, interrupted, interruptible);
+    }
+```
