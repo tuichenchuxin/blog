@@ -63,3 +63,8 @@ HepPlanner
 ### calcite 优化逻辑源码级理解
 1. 关系代数的理解 https://blog.csdn.net/QuinnNorris/article/details/70739094
 
+### calcite 解决编译报错问题
+
+checkout 到最近 release 的tag
+
+注释掉 build.gradle.kts 中的 releaseArtifacts
