@@ -16,3 +16,6 @@ https://github.com/infinyon/fluvio
 按照这个文档，可以快速创建 topic，然后发消息，并且通过 smdk 来快速创建 smartmodule 并生效
 
 https://www.fluvio.io/docs/#installing-the-cli
+
+接下来，看下有没有 good first issue.
+
