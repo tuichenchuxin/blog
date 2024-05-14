@@ -19,3 +19,7 @@ https://www.fluvio.io/docs/#installing-the-cli
 
 接下来，看下有没有 good first issue.
 
+看了半天，感觉暂缓吧～ 
+
+先自己写两个项目。
+
