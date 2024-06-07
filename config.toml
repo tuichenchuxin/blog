@@ -1,7 +1,7 @@
 ##########################################
 # Site Settings
 
-baseURL = "https://example.com/"
+baseURL = "https://tuichenchuxin.github.io/"
 title = "tuichenchuxin's blog"
 languageCode = "en"
 hasCJKLanguage = false
@@ -936,7 +936,7 @@ uglyURLs = false
 
     enableImageHost = false
 
-    imageHostURL = "https://example.com/"
+    imageHostURL = "https://tuichenchuxin.github.io/"
 
     # Replace the image link in the HTML
     # head meta also?
@@ -958,7 +958,7 @@ uglyURLs = false
 
     enableVideoHost = false
 
-    videoHostURL = "https://example.com/"
+    videoHostURL = "https://tuichenchuxin.github.io/"
 
 
     ######################################
