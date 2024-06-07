@@ -18,6 +18,7 @@ https://github.com/TongchengOpenSource/smart-doc/discussions/795
 
 https://github.com/TongchengOpenSource/smart-doc/pull/797
 https://github.com/TongchengOpenSource/smart-doc-maven-plugin/pull/70
+https://github.com/smart-doc-group/smart-doc-group.github.io/pull/87
 
 很快经过 review 修改后合并了。
 
