@@ -20,3 +20,7 @@ https://doc.rust-lang.org/book/
 ![](/img/20231207-115050.jpeg) 
 ![](/img/20231207-115056.jpeg) 
 ![](/img/20231207-115101.jpeg)
+
+最近 rust 学习又有了一些新突破
+
+从零手写文本编辑器 https://www.flenker.blog/hecto/ 这个教程里分成了多个 commit 带着你一步步的完成编辑器，看着自己的代码逐步变成可以使用的文本编辑器，真的很不错哦。
