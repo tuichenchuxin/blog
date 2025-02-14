@@ -102,4 +102,65 @@ dependencies {
 
 那么接下来我应该做些什么呢？
 
+# 用 sqlline 源码调试 calcite mongodb 连接
+
 下载 sqlline 通过代码 debug 连接 mongodb 和 测试 相关 sql。
+
+在 pom 中增加依赖
+
+```xml
+    <dependency>
+      <groupId>org.apache.calcite</groupId>
+      <artifactId>calcite-core</artifactId>
+      <version>1.39.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.calcite</groupId>
+      <artifactId>calcite-mongodb</artifactId>
+      <version>1.39.0-SNAPSHOT</version>
+    </dependency>
+```
+
+idea 上加上程序参数
+```
+Program arguments: -u "jdbc:calcite:model=path/to/mongo-model.json" -n ... 
+```
+
+运行 SqlLine 类
+
+看起来展示有点儿问题。
+
+```
+0: jdbc:calcite:model=/Users/chenchuxin/Docum> !tables
++--+
+|  |
++--+
+|  |
+|  |
+|  |
+```
+
+找了网络信息，发现是 idea 的 debug 窗口 不支持 Jline，所以有这个问题。
+
+https://github.com/julianhyde/sqlline/issues/80 在这里找到了解决方案
+
+在program参数中添加这些后正常了
+
+```
+--maxWidth=120
+--maxHeight=2000
+--color=true
+```
+
+```
+0: jdbc:calcite:model=/Users/chenchuxin/Docum> !tables
++-----------+-------------+-------------------------------+--------------+---------+----------+------------+-----------+
+| TABLE_CAT | TABLE_SCHEM |          TABLE_NAME           |  TABLE_TYPE  | REMARKS | TYPE_CAT | TYPE_SCHEM | TYPE_NAME |
++-----------+-------------+-------------------------------+--------------+---------+----------+------------+-----------+
+|           | metadata    | COLUMNS                       | SYSTEM TABLE |         |          |            |           |
+|           | metadata    | TABLES                        | SYSTEM TABLE |         |          |            |           |
+|           | mongo       | absEntityDict                 | TABLE        |         |          |            |           |
+|           | mongo       | actionBindingTag              | TABLE        |         |          |            |           |
+```
+
+这下就可以愉快的测试了
