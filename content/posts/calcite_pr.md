@@ -164,3 +164,34 @@ https://github.com/julianhyde/sqlline/issues/80 在这里找到了解决方案
 ```
 
 这下就可以愉快的测试了
+
+试了下第一个 sql
+
+```
+0: jdbc:calcite:model=/Users/chenchuxin/Docum> select * from mechanism;
+0: jdbc:calcite:model=/Users/chenchuxin/Docum> Error: Error while executing SQL "select * from mechanism": From line 1, column 15 to line 1, column 23: Object 'MECHANISM' not found within 'mongo'; did you mean 'mechanism'? (state=,code=0)
+```
+
+奇怪，咋 select * 都不行，是支持的不完善么。
+
+试了下
+
+```
+select * from "mechanism";
+```
+发现也是报错，但是表是找到了，debug 发现应该是元数据字段读取的有问题。
+
+经过一圈 debug 和查看源码的测试用例，发现mongodb 默认加了 _MAP 字段
+
+因此可以按照如下方式查询，哈哈，可以成功啦。
+```
+0: jdbc:calcite:model=/Users/chenchuxin/Docum> select cast(_MAP['name'] AS varchar(20)) AS name from "mechanism";
++----------------------------------------------------------------------------------------------------------------------+
+|                                                              NAME                                                    |
++----------------------------------------------------------------------------------------------------------------------+
+| 专案机变更追踪机制                                                                                                            |
+| 分阶段出图应因机制                                                                                                            |
+| 旧料耗用机制                                                                                                               |
+```
+
+当然 deepseek 还给了其它方式，例如在配置中添加字段映射。
