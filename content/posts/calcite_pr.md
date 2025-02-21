@@ -195,3 +195,40 @@ select * from "mechanism";
 ```
 
 当然 deepseek 还给了其它方式，例如在配置中添加字段映射。
+
+# 开始测试 sql，看支持度，然后考虑解决不支持的 sql
+
+哈哈，直接在 MongoAdapterTest 中发现了一些被标注 disable 的 test 可以修复一下了
+
+https://issues.apache.org/jira/browse/CALCITE-2115
+
+```java
+//  @Disabled("broken; [CALCITE-2115] is logged to fix it")
+  @Test void testDistinctCount() {
+    assertModel(MODEL)
+        .query("select state, count(distinct city) as cdc from zips\n"
+            + "where state in ('CA', 'TX') group by state order by state")
+        .returns("STATE=CA; CDC=3\n"
+            + "STATE=TX; CDC=3\n")
+        .queryContains(
+            mongoChecker(
+                "{\n"
+                    + "  \"$match\": {\n"
+                    + "    \"$or\": [\n"
+                    + "      {\n"
+                    + "        \"state\": \"CA\"\n"
+                    + "      },\n"
+                    + "      {\n"
+                    + "        \"state\": \"TX\"\n"
+                    + "      }\n"
+                    + "    ]\n"
+                    + "  }\n"
+                    + "}",
+                "{$project: {CITY: '$city', STATE: '$state'}}",
+                "{$group: {_id: {CITY: '$CITY', STATE: '$STATE'}}}",
+                "{$project: {_id: 0, CITY: '$_id.CITY', STATE: '$_id.STATE'}}",
+                "{$group: {_id: '$STATE', CDC: {$sum: {$cond: [ {$eq: ['CITY', null]}, 0, 1]}}}}",
+                "{$project: {STATE: '$_id', CDC: '$CDC'}}",
+                "{$sort: {STATE: 1}}"));
+  }
+```
