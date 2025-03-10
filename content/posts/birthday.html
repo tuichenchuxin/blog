@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老婆生日终极狂欢夜！</title>
+<style>
+/* 土味美学 */
+body {
+  background: linear-gradient(45deg, #ff00ff, #ff1493, #00ffff);
+  font-family: 'Comic Sans MS', cursive;
+  overflow: auto;
+  margin: 0;
+}
+
+.title {
+  font-size: 48px;
+  color: gold;
+  text-shadow: 3px 3px red;
+  animation: blink 0.5s infinite;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* 黄金按钮 */
+.button {
+  background: linear-gradient(to bottom, #ffd700, #daa520);
+  border: 3px solid #8b4513;
+  padding: 20px 40px;
+  font-size: 24px;
+  border-radius: 50px;
+  cursor: pointer;
+  margin: 20px;
+  transition: transform 0.3s;
+  position: relative;
+  z-index: 2;
+}
+
+.button:hover {
+  transform: scale(1.1);
+  background: linear-gradient(to bottom, #daa520, #ffd700);
+}
+
+/* 盲盒效果 */
+.box {
+  background: rgba(255,255,255,0.9);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 30px hotpink;
+  margin: 20px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+#result {
+  font-size: 36px;
+  color: #ff0066;
+  text-shadow: 2px 2px yellow;
+}
+
+/* 全屏特效画布 */
+#fireworks {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<canvas id="fireworks"></canvas>
+<center>
+
+<!-- 土酷标题 -->
+<h1 class="title">❤️ 热烈庆祝老婆大人诞辰 ❤️</h1>
+
+<!-- 晚餐盲盒 -->
+<div class="box">
+  <h2>✨ 神秘晚餐盲盒 ✨</h2>
+  <button class="button" onclick="pickDinner()">点击抽取今日御膳</button>
+  <div id="dinnerResult"></div>
+</div>
+
+<!-- 幸运抽奖 -->
+<div class="box" style="background: rgba(0,255,255,0.9);">
+  <h2>🎁 至尊生日大奖 🎁</h2>
+  <button class="button" onclick="pickPrize()">点击抽取皇家大礼</button>
+  <div id="prizeResult"></div>
+</div>
+
+<!-- 土味特效 -->
+<marquee scrollamount="20" style="position:relative;z-index:2">🎉🎂🍰🎈💐💃🕺🎊</marquee>
+
+<script>
+// ====================== 特效系统 ======================
+const canvas = document.getElementById('fireworks')
+const ctx = canvas.getContext('2d')
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+
+class Particle {
+  constructor(x, y, color) {
+    this.x = x
+    this.y = y
+    this.color = color
+    this.angle = Math.random() * Math.PI * 2
+    this.speed = Math.random() * 10 + 5
+    this.friction = 0.95
+    this.gravity = 0.3
+  }
+  
+  update() {
+    this.speed *= this.friction
+    this.x += Math.cos(this.angle) * this.speed
+    this.y += Math.sin(this.angle) * this.speed + this.gravity
+  }
+  
+  draw() {
+    ctx.fillStyle = this.color
+    ctx.beginPath()
+    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2)
+    ctx.fill()
+  }
+}
+
+let particles = []
+
+function createFirework(x, y) {
+  const colors = ['#ff0000', '#ffd700', '#00ff00', '#ff1493']
+  for(let i=0; i<50; i++) {
+    const p = new Particle(x, y, colors[Math.floor(Math.random()*4)])
+    particles.push(p)
+  }
+}
+
+function animate() {
+  ctx.fillStyle = 'rgba(0,0,0,0.1)'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  
+  particles.forEach((p,i) => {
+    p.update()
+    p.draw()
+    if(p.speed < 0.5) particles.splice(i,1)
+  })
+  
+  // 随机生成背景小烟花
+  if(Math.random() < 0.1) {
+    createFirework(
+      Math.random()*canvas.width,
+      Math.random()*canvas.height
+    )
+  }
+  
+  requestAnimationFrame(animate)
+}
+
+// 启动动画
+animate()
+
+// 窗口大小变化适配
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+})
+
+// ====================== 业务逻辑 ======================
+const dinners = [
+  "法式烛光晚餐 + 爱心牛排",
+  "麻辣火锅狂欢宴 + 冰镇啤酒",
+  "日料omakase + 清酒畅饮",
+  "烧烤大排档 + 扎啤无限续杯",
+  "私房菜套餐 + 网红甜品"
+]
+
+const prizes = [
+  "全年家务豁免权券",
+  "三亚双人豪华游",
+  "新款包包任选权",
+  "亲亲抱抱举高高券",
+  "霸道总裁体验卡（24小时）"
+]
+
+function pickDinner() {
+  const result = document.getElementById("dinnerResult")
+  result.innerHTML = "🏮 御膳房烹饪中..." 
+  setTimeout(() => {
+    result.innerHTML = "🎉 钦定御膳：<br>" + 
+      dinners[Math.floor(Math.random()*dinners.length)] + 
+      "<br><img src='https://img.icons8.com/color/96/000000/meal.png'>"
+  }, 1500)
+}
+
+function pickPrize() {
+  const result = document.getElementById("prizeResult")
+  result.innerHTML = "⚡️ 正在召唤锦鲤..." 
+  setTimeout(() => {
+    // 触发大礼花特效
+    createFirework(canvas.width/2, canvas.height/2)
+    // 播放音效
+    new Audio('https://actions.google.com/sounds/v1/crowds/cheer.ogg').play()
+    
+    result.innerHTML = "🎁 至尊大奖：<br>" + 
+      prizes[Math.floor(Math.random()*prizes.length)] + 
+      "<br><img src='https://img.icons8.com/color/96/000000/gift.png'>"
+  }, 2000)
+}
+</script>
+</center>
+</body>
+</html>
