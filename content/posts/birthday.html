@@ -81,6 +81,7 @@ body {
 
 <!-- 土酷标题 -->
 <h1 class="title">❤️ 祝菜宝同志生日快乐 ❤️</h1>
+<h1 class="title">这是专属你的土味炫酷抽奖专栏</h1>
 
 <!-- 晚餐盲盒 -->
 <div class="box">
@@ -95,6 +96,31 @@ body {
   <button class="button" onclick="pickPrize()">点击抽取皇家大礼</button>
   <div id="prizeResult"></div>
 </div>
+
+<!-- 在奖品按钮下方添加 -->
+<div class="box" style="background:rgba(255,192,203,0.9)">
+  <h2>💌 甜蜜承诺书</h2>
+  <button class="button" onclick="showPromise()">点击生成爱情契约</button>
+  <div id="promiseResult"></div>
+</div>
+
+<script>
+// 新增承诺书功能
+const promises = [
+  "承包365天美食制作",
+  "无条件陪逛商场特权",
+  "深夜美食自由通行证"
+]
+
+function showPromise() {
+  const result = document.getElementById("promiseResult")
+  result.innerHTML = "📜 正在拟定圣旨..."
+  setTimeout(() => {
+    result.innerHTML = `御赐特权：<br>${promises[Math.floor(Math.random()*promises.length)]}
+    <br><img src="https://img.icons8.com/color/96/000000/contract.png">`
+  }, 1000)
+}
+</script>
 
 <!-- 土味特效 -->
 <marquee scrollamount="20" style="position:relative;z-index:2">🎉🎂🍰🎈💐💃🕺🎊</marquee>
@@ -177,27 +203,28 @@ const dinners = [
   "鹅肝炒饭 + 牛排套餐（豆库）",
   "火锅 + 云贵川bistro(老成火锅)",
   "日料omakase + 清酒畅饮(叁食)",
-  "鲜牛肉火锅健康达人(左庭右院)",
-  "石锅鱼 + 百味云南(云潇潇)",
-  "泰式料理 + 东南亚风情(米辣)",
   "意大利风情(萨莉亚)",
-  "自助high吃(龙歌)",
-  "烤肉套餐（西塔老太太）"
+  "烤肉套餐(西塔老太太)",
+  "褚记北京烤鸭",
+  "罗勒湾",
+  "胡集酒肆",
+  "狮王府",
+  "俄士厨房",
+  "梧桐1872",
+  "野果",
+  "The boots泥靴",
+  "菜澜点心"
 ]
 
 const prizes = [
-  "全年家务豁免权券",
   "月度全屋深度清洁券",
-  "三亚双人豪华游",
-  "新款包包任选权",
-  "新款手机任选权",
-  "新款电脑任选权",
+  "按摩一小时券",
   "亲亲抱抱举高高券",
-  "私人影院观影",
   "大东北夏季吃货游",
   "舟山深度美食游",
-  "演唱会啊",
-  "苏州舒适全家游"
+  "新疆体验游",
+  "大理惬意游",
+  "演唱会啊"
 ]
 
 function pickDinner() {
