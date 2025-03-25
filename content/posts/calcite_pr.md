@@ -547,3 +547,13 @@ distinct 看起来是linq4j 中实现的
 
 https://github.com/apache/calcite/pull/4228
 
+### 尝试难度高一些的 issue
+
+先尝试试试吧，也许没有想象中的那么难
+
+https://issues.apache.org/jira/browse/CALCITE-2109
+
+主要解决递归调用，清理掉 map 的问题
+or (new ormap) -> and (new andMap) -> or (new ormap) -> and (newMap)
+
+https://github.com/apache/calcite/pull/4256
