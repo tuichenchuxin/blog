@@ -557,3 +557,5 @@ https://issues.apache.org/jira/browse/CALCITE-2109
 or (new ormap) -> and (new andMap) -> or (new ormap) -> and (newMap)
 
 https://github.com/apache/calcite/pull/4256
+
+哈哈哈，被 merge 进去啦
