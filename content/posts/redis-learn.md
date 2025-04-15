@@ -81,3 +81,46 @@ PFMERGE
     > 这个需要看是否支持模糊匹配到对应的 key
 
 考虑先按照第二种方式来调研一下
+
+现在看来，是可以通过配置模糊匹配的方式来定义表
+
+```
+{
+  "version": "1.0",
+  "defaultSchema": "redis",
+  "schemas": [
+    {
+      "name": "redis",
+      "type": "custom",
+      "factory": "org.apache.calcite.adapter.redis.RedisSchemaFactory",
+      "operand": {
+        "host": "localhost",
+        "database": "0",
+        "tables": [
+          {
+            "name": "uv_stats",          // 表名
+            "dataFormat": "hyperloglog", // 标识为 HLL 类型
+            "keyPattern": "uv:*"         // 匹配的 Redis 键模式
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+大概效果如下
+```sql
+select * from uv_status;
+
+KEYS | CARDINAL_NUMBER
+uv:20240910 | 2
+uv:20240911 | 3
+```
+
+### 那么接下来就是考虑实现啦
+
+我提了一个 jira 到 calcite 来支持这个，并给出了相关设计。接下来就是等社区的回复啦。
+
+https://issues.apache.org/jira/browse/CALCITE-6956
+
